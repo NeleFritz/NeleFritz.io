@@ -1,26 +1,275 @@
-html
-
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine Website</title>
+    <title>Lernplattform - Startseite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f7 100%);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .site-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 40px;
+        }
+
+        .hero-section {
+            background: white;
+            border-radius: 16px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        .hero-title {
+            color: #1e293b;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        .section-title {
+            color: #1e293b;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.15);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            color: #1e293b;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .hero-section {
+                padding: 30px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Startseite</a></li>
-            <li><a href="about.html">Über uns</a></li>
-            <li><a href="contact.html">Kontakt</a></li>
-            <li><a href="services.html">Leistungen</a></li>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="logo-container">
+            <div class="logo-placeholder">L</div>
+            <div class="site-title">Lernplattform</div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link active">🏠 Startseite</a>
+            </li>
+            <li class="nav-item">
+                <a href="kurse.html" class="nav-link">📚 Kurse</a>
+            </li>
+            <li class="nav-item">
+                <a href="uebungen.html" class="nav-link">✏️ Übungen</a>
+            </li>
+            <li class="nav-item">
+                <a href="ressourcen.html" class="nav-link">📁 Ressourcen</a>
+            </li>
+            <li class="nav-item">
+                <a href="kontakt.html" class="nav-link">✉️ Kontakt</a>
+            </li>
         </ul>
     </nav>
-    
-    <main>
-        <h1>Willkommen auf meiner Website</h1>
-        <p>Das ist die Startseite.</p>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">Willkommen auf deiner Lernplattform</h1>
+            <p class="hero-subtitle">
+                Diese Plattform bietet dir alle Materialien und Ressourcen, die du für dein Studium brauchst. 
+                Strukturiert, übersichtlich und immer verfügbar. Wähle unten einen Bereich aus, um loszulegen.
+            </p>
+        </section>
+
+        <!-- Cards Section -->
+        <h2 class="section-title">Bereiche entdecken</h2>
+        <div class="cards-grid">
+            <a href="kurse.html" class="card">
+                <div class="card-icon">📚</div>
+                <h3 class="card-title">Kurse</h3>
+                <p class="card-description">
+                    Durchsuche alle verfügbaren Kurse und finde Vorlesungsmaterialien, Folien und Aufzeichnungen.
+                </p>
+            </a>
+
+            <a href="uebungen.html" class="card">
+                <div class="card-icon">✏️</div>
+                <h3 class="card-title">Übungen</h3>
+                <p class="card-description">
+                    Übe mit interaktiven Aufgaben und festige dein Wissen durch praktische Anwendungen.
+                </p>
+            </a>
+
+            <a href="ressourcen.html" class="card">
+                <div class="card-icon">📁</div>
+                <h3 class="card-title">Ressourcen</h3>
+                <p class="card-description">
+                    Finde nützliche Downloads, Lernhilfen, Cheat Sheets und weiterführende Materialien.
+                </p>
+            </a>
+
+            <a href="kontakt.html" class="card">
+                <div class="card-icon">✉️</div>
+                <h3 class="card-title">Kontakt</h3>
+                <p class="card-description">
+                    Hast du Fragen oder Feedback? Hier findest du alle Kontaktmöglichkeiten.
+                </p>
+            </a>
+        </div>
     </main>
 </body>
 </html>
