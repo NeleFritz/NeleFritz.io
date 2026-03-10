@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lektion 3 - Lernplattform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f7 100%);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .site-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .nav-menu { list-style: none; }
+
+        .nav-item { margin-bottom: 10px; }
+
+        .nav-link {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 30px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover { text-decoration: underline; }
+
+        /* Lesson Header */
+        .lesson-header {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .lesson-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .lesson-title {
+            color: #1e293b;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .lesson-description {
+            color: #64748b;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* ── Collapsible Section ───────────────────────────────── */
+        .collapsible-section {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+            gap: 16px;
+        }
+
+        .collapsible-header:hover {
+            background: #f8fafc;
+        }
+
+        .collapsible-title {
+            color: #1e293b;
+            font-size: 20px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .collapse-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            color: #3b82f6;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .collapsible-header.open .collapse-icon {
+            background: #3b82f6;
+            color: white;
+            transform: rotate(45deg);
+        }
+
+        .collapsible-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .collapsible-body.open {
+            max-height: 2000px;
+        }
+
+        .collapsible-body-inner {
+            padding: 0 32px 28px 32px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        /* Content text styling */
+        .content-text {
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.8;
+            padding-top: 20px;
+        }
+
+        .content-text p { margin-bottom: 15px; }
+        .content-text p:last-child { margin-bottom: 0; }
+
+        .content-text ul {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .content-text li { margin-bottom: 8px; }
+
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            color: #1e40af;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+        }
+
+        /* ── Lernziele Checklist ───────────────────────────────── */
+        .lernziele-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 20px;
+        }
+
+        .lernziel-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .lernziel-item:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .lernziel-item.checked {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .lernziel-item input[type="checkbox"] { display: none; }
+
+        .lz-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .lernziel-item.checked .lz-checkbox {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+
+        .lernziel-item.checked .lz-checkbox::after {
+            content: '';
+            width: 6px;
+            height: 10px;
+            border: 2px solid white;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg) translateY(-1px);
+            display: block;
+        }
+
+        .lz-text {
+            font-size: 15px;
+            color: #374151;
+            flex: 1;
+            line-height: 1.4;
+            transition: color 0.2s ease;
+        }
+
+        .lernziel-item.checked .lz-text {
+            color: #166534;
+        }
+
+        .lz-badge {
+            font-size: 12px;
+            color: #22c55e;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .lernziel-item.checked .lz-badge {
+            opacity: 1;
+        }
+
+        .lernziele-progress {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lz-progress-bar-bg {
+            flex: 1;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .lz-progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .lz-progress-text {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* Navigation Buttons */
+        .lesson-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: white;
+            color: #3b82f6;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59,130,246,0.2);
+            background: #3b82f6;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .lesson-header { padding: 25px; }
+            .lesson-title { font-size: 28px; }
+            .collapsible-header { padding: 18px 20px; }
+            .collapsible-body-inner { padding: 0 20px 20px 20px; }
+            .lesson-navigation { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="logo-container">
+        <div class="logo-placeholder">L</div>
+        <div class="site-title">Lernplattform</div>
+    </div>
+    <ul class="nav-menu">
+        <li class="nav-item"><a href="index.html"    class="nav-link">🏠 Startseite</a></li>
+        <li class="nav-item"><a href="lektion1.html" class="nav-link">📖 Lektion 1</a></li>
+        <li class="nav-item"><a href="lektion2.html" class="nav-link">📖 Lektion 2</a></li>
+        <li class="nav-item"><a href="lektion3.html" class="nav-link active">📖 Lektion 3</a></li>
+        <li class="nav-item"><a href="lektion4.html" class="nav-link">📖 Lektion 4</a></li>
+        <li class="nav-item"><a href="lektion5.html" class="nav-link">📖 Lektion 5</a></li>
+        <li class="nav-item"><a href="lektion6.html" class="nav-link">📖 Lektion 6</a></li>
+        <li class="nav-item"><a href="lektion7.html" class="nav-link">📖 Lektion 7</a></li>
+        <li class="nav-item"><a href="lektion8.html" class="nav-link">📖 Lektion 8</a></li>
+        <li class="nav-item"><a href="lektion9.html" class="nav-link">📖 Lektion 9</a></li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+    <div class="breadcrumb">
+        <a href="index.html">Startseite</a> / Lektion 3
+    </div>
+
+    <!-- Lesson Header -->
+    <div class="lesson-header">
+        <span class="lesson-number">Lektion 3</span>
+        <h1 class="lesson-title">Wissenschaftliches Arbeiten</h1>
+        <p class="lesson-description">
+            In dieser Lektion lernst du die Grundlagen des wissenschaftlichen Arbeitens kennen –
+            von der Quellenrecherche über das strukturierte Lesen bis hin zur korrekten Zitation.
+            Klappe die Abschnitte auf oder zu, um gezielt zu lernen.
+        </p>
+    </div>
+
+    <!-- ── Section 1: Lernziele ───────────────────────────────── -->
+    <div class="collapsible-section">
+        <div class="collapsible-header open" onclick="toggleSection(this)" id="header-0">
+            <span class="collapsible-title">🎯 Lernziele</span>
+            <div class="collapse-icon">+</div>
+        </div>
+        <div class="collapsible-body open" id="body-0">
+            <div class="collapsible-body-inner">
+                <p style="color:#64748b; font-size:14px; padding-top:16px; margin-bottom:4px;">
+                    Hake ab, was du bereits kannst oder verstanden hast:
+                </p>
+
+                <div class="lernziele-list" id="lernzieleList">
+                    <!-- Items injected by JS -->
+                </div>
+
+                <div class="lernziele-progress">
+                    <div class="lz-progress-bar-bg">
+                        <div class="lz-progress-bar-fill" id="lzProgressFill" style="width:0%"></div>
+                    </div>
+                    <span class="lz-progress-text" id="lzProgressText">0 / 4 erledigt</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Section 2: Einführung ──────────────────────────────── -->
+    <div class="collapsible-section">
+        <div class="collapsible-header open" onclick="toggleSection(this)" id="header-1">
+            <span class="collapsible-title">📚 Einführung in die Wissenschaft</span>
+            <div class="collapse-icon">+</div>
+        </div>
+        <div class="collapsible-body open" id="body-1">
+            <div class="collapsible-body-inner">
+                <div class="content-text">
+                    <p>
+                        Wissenschaftliches Arbeiten bedeutet, Fragen systematisch und nachvollziehbar zu beantworten.
+                        Im Gegensatz zum Alltagsdenken folgt die Wissenschaft klaren Regeln: Aussagen müssen
+                        belegbar, Methoden transparent und Schlussfolgerungen logisch nachvollziehbar sein.
+                    </p>
+                    <p>
+                        Dabei spielt die Wahl der richtigen Quellen eine zentrale Rolle. Nicht jede Information,
+                        die im Internet verfügbar ist, eignet sich für eine wissenschaftliche Arbeit. Verlässliche
+                        Quellen sind solche, die einem Peer-Review-Verfahren unterzogen wurden oder von
+                        anerkannten Fachverlagen herausgegeben werden.
+                    </p>
+
+                    <div class="info-box">
+                        <strong>💡 Merke</strong>
+                        Wissenschaft ist kein starres System – sie lebt vom Hinterfragen, Testen und Revidieren
+                        von Annahmen. Eine gute Forscherin oder ein guter Forscher bleibt stets offen für
+                        neue Erkenntnisse, auch wenn sie bisherigen Annahmen widersprechen.
+                    </div>
+
+                    <p>
+                        Um wissenschaftlich zu arbeiten, brauchst du vor allem drei Dinge: eine präzise
+                        Fragestellung, eine durchdachte Methode und einen ehrlichen Umgang mit deinen Quellen.
+                        Diese drei Elemente bilden das Fundament jeder guten Seminar- oder Abschlussarbeit.
+                    </p>
+
+                    <ul>
+                        <li>Präzise Fragestellung als Ausgangspunkt</li>
+                        <li>Nachvollziehbare und geeignete Methode</li>
+                        <li>Korrekte Zitation und Quellenangabe</li>
+                        <li>Kritische Auseinandersetzung mit der Literatur</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Section 3: Quellen & Zitation ─────────────────────── -->
+    <div class="collapsible-section">
+        <div class="collapsible-header open" onclick="toggleSection(this)" id="header-2">
+            <span class="collapsible-title">🔍 Quellen finden & richtig zitieren</span>
+            <div class="collapse-icon">+</div>
+        </div>
+        <div class="collapsible-body open" id="body-2">
+            <div class="collapsible-body-inner">
+                <div class="content-text">
+                    <p>
+                        Die Suche nach geeigneten Quellen ist ein Handwerk, das man lernen kann. Datenbanken
+                        wie Google Scholar, JSTOR oder PubMed bieten Zugang zu einer Vielzahl wissenschaftlicher
+                        Artikel. Deine Hochschulbibliothek stellt oft zusätzliche Zugänge zu kostenpflichtigen
+                        Zeitschriften bereit.
+                    </p>
+                    <p>
+                        Beim Zitieren gibt es verschiedene Stile – APA, Chicago, Harvard oder MLA sind die
+                        geläufigsten. Welchen du verwendest, hängt von deinem Fachbereich und den Vorgaben
+                        deiner Lehrperson ab. Wichtig ist vor allem: Sei konsequent und einheitlich.
+                    </p>
+
+                    <div class="info-box">
+                        <strong>⚠️ Häufiger Fehler</strong>
+                        Viele Studierende verwechseln Inspirationsquellen (Zeitungen, Blogs, Social Media)
+                        mit zitierfähigen wissenschaftlichen Quellen. Erstere können als Einstieg dienen,
+                        dürfen in der Arbeit selbst aber nicht als Belege verwendet werden.
+                    </div>
+
+                    <p>
+                        Ein praktischer Tipp: Lege von Anfang an eine Literaturliste an und notiere dir
+                        alle relevanten Angaben direkt beim ersten Lesen. So sparst du später viel Zeit
+                        und vermeidest lückenhaft zitierte Quellen.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="lesson-navigation">
+        <a href="lektion2.html" class="nav-button">← Lektion 2</a>
+        <a href="lektion4.html" class="nav-button">Lektion 4 →</a>
+    </div>
+
+</main>
+
+<script>
+// ── Lernziele data ────────────────────────────────────────────
+const lernziele = [
+    "Das kann ich schon!",
+    "Ich kenne den Unterschied zwischen zitierfähigen und nicht zitierfähigen Quellen.",
+    "Ich kann eine wissenschaftliche Fragestellung formulieren.",
+    "Ich weiß, wie ich in Fachdatenbanken nach Literatur suche."
+];
+
+// ── localStorage key (unique per page) ───────────────────────
+const LZ_KEY = 'lernziele__' + window.location.pathname;
+
+// Load saved checkbox state
+function loadLZState() {
+    try {
+        const raw = localStorage.getItem(LZ_KEY);
+        if (!raw) return new Array(lernziele.length).fill(false);
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === lernziele.length) return parsed;
+    } catch(e) {}
+    return new Array(lernziele.length).fill(false);
+}
+
+function saveLZState(state) {
+    try { localStorage.setItem(LZ_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// Build lernziele list
+const lzState = loadLZState();
+const lzList  = document.getElementById('lernzieleList');
+
+lernziele.forEach((text, i) => {
+    const item = document.createElement('div');
+    item.className = 'lernziel-item' + (lzState[i] ? ' checked' : '');
+    item.innerHTML = `
+        <div class="lz-checkbox"></div>
+        <span class="lz-text">${text}</span>
+        <span class="lz-badge">✓ Erledigt</span>
+    `;
+    item.addEventListener('click', () => {
+        lzState[i] = !lzState[i];
+        item.classList.toggle('checked', lzState[i]);
+        saveLZState(lzState);
+        updateLZProgress();
+    });
+    lzList.appendChild(item);
+});
+
+function updateLZProgress() {
+    const done  = lzState.filter(Boolean).length;
+    const total = lernziele.length;
+    const pct   = Math.round((done / total) * 100);
+    document.getElementById('lzProgressFill').style.width = pct + '%';
+    document.getElementById('lzProgressText').textContent = `${done} / ${total} erledigt`;
+}
+
+updateLZProgress();
+
+// ── Collapsible sections ──────────────────────────────────────
+// Save open/closed state per section
+const COLLAPSE_KEY = 'collapse__' + window.location.pathname;
+
+function loadCollapseState() {
+    try {
+        const raw = localStorage.getItem(COLLAPSE_KEY);
+        if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null; // null = use defaults (all open)
+}
+
+function saveCollapseState() {
+    const state = [];
+    document.querySelectorAll('.collapsible-header').forEach(h => {
+        state.push(h.classList.contains('open'));
+    });
+    try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// Apply saved collapse state on load
+const collapseState = loadCollapseState();
+if (collapseState) {
+    document.querySelectorAll('.collapsible-header').forEach((header, i) => {
+        const body = header.nextElementSibling;
+        if (collapseState[i] === false) {
+            header.classList.remove('open');
+            body.classList.remove('open');
+        }
+    });
+}
+
+function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const isOpen = header.classList.contains('open');
+
+    if (isOpen) {
+        header.classList.remove('open');
+        body.classList.remove('open');
+    } else {
+        header.classList.add('open');
+        body.classList.add('open');
+    }
+    saveCollapseState();
+}
+</script>
+</body>
+</html>
