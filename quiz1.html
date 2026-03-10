@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Übung</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: transparent;
+            padding: 10px 0;
+        }
+
+        .quiz-container { max-width: 100%; }
+
+        .question-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .question-badge {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .question-hint {
+            color: #94a3b8;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .question-text {
+            color: #1e293b;
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .option-label:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+            transform: translateX(3px);
+        }
+
+        .option-label input[type="checkbox"] { display: none; }
+
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .option-label input:checked + .custom-checkbox {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .option-label input:checked + .custom-checkbox::after {
+            content: '';
+            width: 6px;
+            height: 10px;
+            border: 2px solid white;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg) translateY(-1px);
+            display: block;
+        }
+
+        .option-text {
+            color: #374151;
+            font-size: 15px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .option-label.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+            pointer-events: none;
+        }
+        .option-label.correct .custom-checkbox {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        .option-label.correct .custom-checkbox::after {
+            content: '';
+            width: 6px;
+            height: 10px;
+            border: 2px solid white;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg) translateY(-1px);
+            display: block;
+        }
+
+        .option-label.wrong {
+            border-color: #ef4444;
+            background: #fef2f2;
+            pointer-events: none;
+        }
+        .option-label.wrong .custom-checkbox {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+        .option-label.wrong .custom-checkbox::after {
+            content: '✕';
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .option-label.missed {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            pointer-events: none;
+        }
+        .option-label.missed .custom-checkbox {
+            background: #f59e0b;
+            border-color: #f59e0b;
+        }
+        .option-label.missed .custom-checkbox::after {
+            content: '!';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .option-label.neutral {
+            opacity: 0.55;
+            pointer-events: none;
+        }
+        .option-label.neutral .option-text { color: #94a3b8; }
+
+        .feedback-icon {
+            margin-left: auto;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .feedback-message {
+            margin-top: 18px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.5;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-message.success {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #166534;
+            display: block;
+        }
+        .feedback-message.partial {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            display: block;
+        }
+        .feedback-message.error {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            display: block;
+        }
+
+        .reset-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #3b82f6;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .reset-btn:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            transform: translateY(-1px);
+        }
+
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 14px 20px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .progress-dots { display: flex; gap: 6px; }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: background 0.3s ease;
+        }
+        .progress-dot.correct-dot { background: #22c55e; }
+        .progress-dot.wrong-dot   { background: #ef4444; }
+    </style>
+</head>
+<body>
+<div class="quiz-container">
+    <div class="quiz-progress">
+        <span class="progress-label">Fortschritt:</span>
+        <div class="progress-dots" id="progressDots"></div>
+    </div>
+    <div id="questionsContainer"></div>
+</div>
+
+<script>
+// =============================================
+//  HIER KANNST DU DEINE FRAGEN ANPASSEN
+// =============================================
+const questions = [
+    {
+        text: "Welche der folgenden Aussagen zu wissenschaftlichen Quellen sind korrekt?",
+        options: [
+            { text: "Peer-reviewed Artikel gelten als besonders verlässliche Quellen.", correct: true },
+            { text: "Wikipedia ist eine zitierfähige wissenschaftliche Quelle.", correct: false },
+            { text: "Monographien von Fachverlagen sind zitierfähig.", correct: true },
+            { text: "Blogbeiträge sind immer zitierfähig.", correct: false },
+            { text: "Sammelbände mit Herausgebern sind wissenschaftliche Quellen.", correct: true }
+        ]
+    },
+    {
+        text: "Was sind hilfreiche Inspirationsquellen für die Ideenfindung bei Seminararbeiten, aber keine zitierfähigen wissenschaftlichen Quellen?",
+        options: [
+            { text: "Instagram-Posts", correct: true },
+            { text: "Zeitungen", correct: true },
+            { text: "Pop-Science-Bücher", correct: true },
+            { text: "Fachbücher", correct: false },
+            { text: "Fachartikel", correct: false },
+            { text: "InMind-Beiträge", correct: false }
+        ]
+    },
+    {
+        text: "Welche Merkmale kennzeichnen eine gute wissenschaftliche Fragestellung?",
+        options: [
+            { text: "Sie ist klar und präzise formuliert.", correct: true },
+            { text: "Sie kann mit Ja oder Nein beantwortet werden.", correct: false },
+            { text: "Sie ist empirisch oder theoretisch beantwortbar.", correct: true },
+            { text: "Sie ist so offen wie möglich gehalten.", correct: false },
+            { text: "Sie hat einen erkennbaren Bezug zur Fachliteratur.", correct: true }
+        ]
+    }
+];
+// =============================================
+
+// Unique key per quiz file so multiple quizzes don't overwrite each other
+const STORAGE_KEY = 'quiz__' + window.location.pathname;
+
+// Central in-memory state – single source of truth
+// Structure: [{ selected: bool[], answered: bool, result: string|null }]
+const state = questions.map(q => ({
+    selected: new Array(q.options.length).fill(false),
+    answered: false,
+    result: null
+}));
+
+// ── localStorage ──────────────────────────────────────────────
+function persist() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e) {}
+}
+
+function hydrate() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        if (!Array.isArray(saved) || saved.length !== questions.length) return;
+        saved.forEach((s, qi) => {
+            // Only restore if option count still matches (guards against question edits)
+            if (Array.isArray(s.selected) && s.selected.length === state[qi].selected.length) {
+                state[qi].selected = s.selected.map(v => v === true);
+            }
+            state[qi].answered = s.answered === true;
+            state[qi].result   = typeof s.result === 'string' ? s.result : null;
+        });
+    } catch(e) {}
+}
+// ─────────────────────────────────────────────────────────────
+
+// 1. Load saved state into memory BEFORE touching the DOM
+hydrate();
+
+// 2. Build DOM
+const container     = document.getElementById('questionsContainer');
+const dotsContainer = document.getElementById('progressDots');
+
+questions.forEach((q, qi) => {
+    // Progress dot
+    const dot = document.createElement('div');
+    dot.id = `dot-${qi}`;
+    dot.className = 'progress-dot';
+    dotsContainer.appendChild(dot);
+
+    // Question card
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <div class="question-meta">
+            <span class="question-badge">Frage ${qi + 1} von ${questions.length}</span>
+            <span class="question-hint">Mehrere Antworten möglich</span>
+        </div>
+        <div class="question-text">${q.text}</div>
+        <div class="options-list">
+            ${q.options.map((opt, oi) => `
+                <label class="option-label" id="opt-${qi}-${oi}" onclick="handleChange(${qi},${oi})">
+                    <input type="checkbox" id="cb-${qi}-${oi}">
+                    <div class="custom-checkbox"></div>
+                    <span class="option-text">${opt.text}</span>
+                    <span class="feedback-icon" id="icon-${qi}-${oi}"></span>
+                </label>
+            `).join('')}
+        </div>
+        <div class="feedback-message" id="feedback-${qi}"></div>
+        <button class="reset-btn" id="reset-${qi}" onclick="resetQuestion(${qi})" style="display:none">
+            ↺ Nochmal versuchen
+        </button>
+    `;
+    container.appendChild(card);
+
+    // 3. Apply saved state to this card right after it's in the DOM
+    if (state[qi].answered) {
+        // Restore checkbox ticks from memory
+        state[qi].selected.forEach((checked, oi) => {
+            document.getElementById(`cb-${qi}-${oi}`).checked = checked;
+        });
+        // Re-render the feedback visuals
+        renderResult(qi);
+    }
+});
+
+// ── Event handler ─────────────────────────────────────────────
+function handleChange(qi, oi) {
+    if (state[qi].answered) return;
+
+    // Toggle in memory first, then sync DOM
+    state[qi].selected[oi] = !state[qi].selected[oi];
+    document.getElementById(`cb-${qi}-${oi}`).checked = state[qi].selected[oi];
+
+    // Evaluate as soon as at least one option is ticked
+    if (state[qi].selected.some(Boolean)) {
+        state[qi].answered = true;
+        computeResult(qi);
+        renderResult(qi);
+        persist();
+    }
+}
+
+// ── Logic ─────────────────────────────────────────────────────
+function computeResult(qi) {
+    let wrong = 0, missed = 0;
+    questions[qi].options.forEach((opt, oi) => {
+        if ( state[qi].selected[oi] && !opt.correct) wrong++;
+        if (!state[qi].selected[oi] &&  opt.correct) missed++;
+    });
+    state[qi].result = (wrong === 0 && missed === 0) ? 'correct'
+                     : wrong > 0                     ? 'wrong'
+                     :                                 'partial';
+}
+
+// ── Render ────────────────────────────────────────────────────
+function renderResult(qi) {
+    const q        = questions[qi];
+    const fb       = document.getElementById(`feedback-${qi}`);
+    const dot      = document.getElementById(`dot-${qi}`);
+    const resetBtn = document.getElementById(`reset-${qi}`);
+
+    let correctSelected = 0, wrongSelected = 0, missedCorrect = 0;
+
+    q.options.forEach((opt, oi) => {
+        const label = document.getElementById(`opt-${qi}-${oi}`);
+        const icon  = document.getElementById(`icon-${qi}-${oi}`);
+        const sel   = state[qi].selected[oi];
+
+        label.classList.remove('correct', 'wrong', 'missed', 'neutral');
+
+        if (sel && opt.correct)   { label.classList.add('correct'); icon.textContent = '✓'; correctSelected++; }
+        else if (sel)             { label.classList.add('wrong');   icon.textContent = '✗'; wrongSelected++;   }
+        else if (opt.correct)     { label.classList.add('missed');  icon.textContent = '!'; missedCorrect++;   }
+        else                      { label.classList.add('neutral'); icon.textContent = '';                     }
+    });
+
+    const total = q.options.filter(o => o.correct).length;
+
+    if (state[qi].result === 'correct') {
+        fb.className = 'feedback-message success';
+        fb.innerHTML = `🎉 <strong>Perfekt!</strong> Du hast alle richtigen Antworten gefunden.`;
+        dot.className = 'progress-dot correct-dot';
+    } else if (state[qi].result === 'wrong') {
+        fb.className = 'feedback-message error';
+        fb.innerHTML = `❌ <strong>Nicht ganz.</strong> Du hast ${wrongSelected} falsche Antwort${wrongSelected > 1 ? 'en' : ''} gewählt.`
+                     + (missedCorrect > 0 ? ` ${missedCorrect} richtige Antwort${missedCorrect > 1 ? 'en fehlen' : ' fehlt'} noch.` : '');
+        dot.className = 'progress-dot wrong-dot';
+        resetBtn.style.display = 'inline-flex';
+    } else {
+        fb.className = 'feedback-message partial';
+        fb.innerHTML = `⚠️ <strong>Fast!</strong> Du hast ${correctSelected} von ${total} richtigen Antworten gefunden. `
+                     + `Es ${missedCorrect === 1 ? 'fehlt noch eine' : `fehlen noch ${missedCorrect}`}.`;
+        dot.className = 'progress-dot wrong-dot';
+        resetBtn.style.display = 'inline-flex';
+    }
+}
+
+// ── Reset ─────────────────────────────────────────────────────
+function resetQuestion(qi) {
+    state[qi].selected = new Array(questions[qi].options.length).fill(false);
+    state[qi].answered = false;
+    state[qi].result   = null;
+
+    questions[qi].options.forEach((_, oi) => {
+        document.getElementById(`cb-${qi}-${oi}`).checked = false;
+        document.getElementById(`opt-${qi}-${oi}`).className = 'option-label';
+        document.getElementById(`icon-${qi}-${oi}`).textContent = '';
+    });
+
+    document.getElementById(`feedback-${qi}`).className = 'feedback-message';
+    document.getElementById(`feedback-${qi}`).innerHTML = '';
+    document.getElementById(`reset-${qi}`).style.display = 'none';
+    document.getElementById(`dot-${qi}`).className = 'progress-dot';
+
+    persist();
+}
+</script>
+</body>
+</html>
