@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapitel 3 – Wissenschaftliches Schreiben</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --text: #1a1a18;
+    --muted: #6b6b65;
+    --accent: #2d5a3d;
+    --accent-light: #e8f0eb;
+    --accent-mid: #a8c4b0;
+    --warn: #b85c2a;
+    --warn-light: #f5ece6;
+    --border: #dddbd4;
+    --tab-active-bg: #2d5a3d;
+    --tab-active-text: #ffffff;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* Top Nav */
+  .top-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-title {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+
+  .nav-chapters {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav-chapters a {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .nav-chapters a:hover { background: var(--bg); border-color: var(--border); }
+  .nav-chapters a.active { background: var(--accent); color: white; }
+
+  .nav-progress-text {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Header */
+  .chapter-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2rem 0;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .chapter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .chapter-title {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 6px;
+  }
+
+  .chapter-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Tab Navigation */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    margin-top: 0.5rem;
+  }
+
+  .tab-btn {
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-btn .tab-check {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 9px;
+    line-height: 14px;
+    text-align: center;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+
+  /* Content area */
+  .content-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ==================== TAB 1: LERNZIELE ==================== */
+  .lernziele-intro {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    padding: 12px 16px;
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--accent);
+  }
+
+  .lernziel-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .lernziel-item:hover { border-color: var(--accent-mid); background: #fcfcfb; }
+  .lernziel-item.checked { background: var(--accent-light); border-color: var(--accent-mid); }
+
+  .lz-checkbox {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    margin-top: 2px;
+  }
+
+  .lernziel-item.checked .lz-checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .lz-checkmark { color: white; font-size: 11px; opacity: 0; transition: opacity 0.15s; }
+  .lernziel-item.checked .lz-checkmark { opacity: 1; }
+
+  .lz-text { font-size: 15px; }
+  .lernziel-item.checked .lz-text { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--accent-mid); }
+
+  .progress-bar-wrap {
+    margin-top: 1.5rem;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .progress-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* ==================== TAB 2: KERNKONZEPTE ==================== */
+  .konzept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) { .konzept-grid { grid-template-columns: 1fr; } }
+
+  .konzept-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .konzept-header {
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    transition: background 0.15s;
+  }
+
+  .konzept-header:hover { background: var(--bg); }
+
+  .konzept-header-left { display: flex; align-items: center; gap: 10px; }
+
+  .konzept-num {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .konzept-name { font-size: 14px; font-weight: 500; }
+
+  .konzept-chevron {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .konzept-card.open .konzept-chevron { transform: rotate(180deg); }
+
+  .konzept-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .konzept-card.open .konzept-body { max-height: 300px; }
+
+  .konzept-inner {
+    padding: 0 16px 16px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  .konzept-tag {
+    display: inline-block;
+    font-size: 11px;
+    background: var(--warn-light);
+    color: var(--warn);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  /* ==================== TAB 3: INHALT ==================== */
+  .inhalt-section {
+    margin-bottom: 2rem;
+  }
+
+  .inhalt-section-title {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inhalt-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .inhalt-highlight {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 14px;
+    margin: 1rem 0;
+    color: var(--text);
+  }
+
+  .inhalt-highlight strong { color: var(--accent); }
+
+  .resource-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .resource-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+  }
+
+  .resource-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .icon-podcast { background: var(--warn-light); }
+  .icon-slides { background: var(--accent-light); }
+  .icon-book { background: #eef0f8; }
+
+  .resource-label { font-weight: 500; }
+  .resource-desc { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+  /* ==================== TAB 4: ÜBUNGEN ==================== */
+  .uebung-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .uebung-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .uebung-num {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .uebung-content { flex: 1; }
+  .uebung-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .uebung-desc { font-size: 13px; color: var(--muted); }
+
+  .uebung-type-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .badge-podcast { background: var(--warn-light); color: var(--warn); }
+  .badge-written { background: var(--accent-light); color: var(--accent); }
+  .badge-workbook { background: #eef0f8; color: #4a5280; }
+
+  .loesung-toggle {
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--border);
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+
+  .loesung-toggle:hover { background: var(--bg); }
+
+  .loesung-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .uebung-item.sol-open .loesung-body { max-height: 400px; }
+
+  .loesung-inner {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.65;
+    background: var(--warn-light);
+    border-top: 1px solid #e8d4c8;
+  }
+
+  .loesung-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--warn);
+    margin-bottom: 6px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <span class="nav-title">Wissenschaftliches Arbeiten</span>
+  <div class="nav-chapters">
+    <a href="#">1</a><a href="#">2</a><a href="#" class="active">3</a><a href="#">4</a>
+    <a href="#">5</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a href="#">9</a>
+  </div>
+  <span class="nav-progress-text" id="nav-progress">0 / 9 Kapitel abgeschlossen</span>
+</nav>
+
+<!-- Chapter Header + Tabs -->
+<div style="background: var(--surface); border-bottom: 1px solid var(--border);">
+  <div class="chapter-header">
+    <div class="chapter-badge">Kapitel 3</div>
+    <h1 class="chapter-title">Wissenschaftliches Schreiben</h1>
+    <p class="chapter-subtitle">Argumentation, Zitation und Textaufbau in wissenschaftlichen Arbeiten</p>
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="lernziele">
+        Lernziele <span class="tab-check" id="check-lernziele">–</span>
+      </button>
+      <button class="tab-btn" data-tab="kernkonzepte">Kernkonzepte</button>
+      <button class="tab-btn" data-tab="inhalt">Inhalt</button>
+      <button class="tab-btn" data-tab="uebungen">Übungen</button>
+    </nav>
+  </div>
+</div>
+
+<!-- Content -->
+<main class="content-wrapper">
+
+  <!-- TAB 1: Lernziele -->
+  <div class="tab-panel active" id="tab-lernziele">
+    <div class="lernziele-intro">
+      Hake ab, was du bereits weißt oder verstehst. Du kannst jederzeit zurückkehren und deinen Fortschritt aktualisieren.
+    </div>
+
+    <div class="lernziel-item" onclick="toggleLernziel(this)">
+      <div class="lz-checkbox"><span class="lz-checkmark">✓</span></div>
+      <span class="lz-text">Ich kann eine präzise wissenschaftliche Fragestellung formulieren.</span>
+    </div>
+    <div class="lernziel-item" onclick="toggleLernziel(this)">
+      <div class="lz-checkbox"><span class="lz-checkmark">✓</span></div>
+      <span class="lz-text">Ich kenne den Unterschied zwischen induktivem und deduktivem Vorgehen.</span>
+    </div>
+    <div class="lernziel-item" onclick="toggleLernziel(this)">
+      <div class="lz-checkbox"><span class="lz-checkmark">✓</span></div>
+      <span class="lz-text">Ich kann Quellen korrekt nach APA-Richtlinien zitieren.</span>
+    </div>
+    <div class="lernziel-item" onclick="toggleLernziel(this)">
+      <div class="lz-checkbox"><span class="lz-checkmark">✓</span></div>
+      <span class="lz-text">Ich verstehe den Aufbau einer wissenschaftlichen Argumentation.</span>
+    </div>
+    <div class="lernziel-item" onclick="toggleLernziel(this)">
+      <div class="lz-checkbox"><span class="lz-checkmark">✓</span></div>
+      <span class="lz-text">Ich kann eine Hypothese korrekt ableiten und falsifizierbar formulieren.</span>
+    </div>
+    <div class="lernziel-item" onclick="toggleLernziel(this)">
+      <div class="lz-checkbox"><span class="lz-checkmark">✓</span></div>
+      <span class="lz-text">Ich kenne den Unterschied zwischen Primär- und Sekundärquellen.</span>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span id="progress-text">0 von 6 Lernzielen abgehakt</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Kernkonzepte -->
+  <div class="tab-panel" id="tab-kernkonzepte">
+    <p style="font-size:14px; color:var(--muted); margin-bottom:1.25rem;">
+      Die wichtigsten Begriffe und Konzepte dieses Kapitels auf einen Blick. Klicke auf ein Konzept für eine kurze Erklärung.
+    </p>
+    <div class="konzept-grid">
+
+      <div class="konzept-card" onclick="toggleKonzept(this)">
+        <div class="konzept-header">
+          <div class="konzept-header-left">
+            <span class="konzept-num">1</span>
+            <span class="konzept-name">Forschungsfrage</span>
+          </div>
+          <span class="konzept-chevron">▼</span>
+        </div>
+        <div class="konzept-body">
+          <div class="konzept-inner">
+            <div class="konzept-tag">Grundlage</div>
+            <p>Die Forschungsfrage ist das Herzstück jeder wissenschaftlichen Arbeit. Sie muss präzise, beantwortbar und relevant sein – zu weit gefasst führt sie zu oberflächlichen Ergebnissen, zu eng zu fehlender Bedeutung.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="konzept-card" onclick="toggleKonzept(this)">
+        <div class="konzept-header">
+          <div class="konzept-header-left">
+            <span class="konzept-num">2</span>
+            <span class="konzept-name">Induktion vs. Deduktion</span>
+          </div>
+          <span class="konzept-chevron">▼</span>
+        </div>
+        <div class="konzept-body">
+          <div class="konzept-inner">
+            <div class="konzept-tag">Methodik</div>
+            <p><strong>Induktiv:</strong> Vom Besonderen zum Allgemeinen – aus Beobachtungen wird eine Theorie abgeleitet.<br><br><strong>Deduktiv:</strong> Vom Allgemeinen zum Besonderen – eine bestehende Theorie wird an konkreten Fällen überprüft.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="konzept-card" onclick="toggleKonzept(this)">
+        <div class="konzept-header">
+          <div class="konzept-header-left">
+            <span class="konzept-num">3</span>
+            <span class="konzept-name">Hypothese</span>
+          </div>
+          <span class="konzept-chevron">▼</span>
+        </div>
+        <div class="konzept-body">
+          <div class="konzept-inner">
+            <div class="konzept-tag">Grundlage</div>
+            <p>Eine Hypothese ist eine begründete Annahme, die durch Daten widerlegt werden kann (Falsifizierbarkeit nach Popper). Sie bildet die Brücke zwischen Theorie und empirischer Überprüfung.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="konzept-card" onclick="toggleKonzept(this)">
+        <div class="konzept-header">
+          <div class="konzept-header-left">
+            <span class="konzept-num">4</span>
+            <span class="konzept-name">APA-Zitation</span>
+          </div>
+          <span class="konzept-chevron">▼</span>
+        </div>
+        <div class="konzept-body">
+          <div class="konzept-inner">
+            <div class="konzept-tag">Formales</div>
+            <p>Das APA-Format ist ein standardisiertes Zitationssystem. Im Text: (Autor, Jahr, S. X). Im Literaturverzeichnis: Nachname, Initiale. (Jahr). <em>Titel.</em> Verlag.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="konzept-card" onclick="toggleKonzept(this)">
+        <div class="konzept-header">
+          <div class="konzept-header-left">
+            <span class="konzept-num">5</span>
+            <span class="konzept-name">Primär- vs. Sekundärquelle</span>
+          </div>
+          <span class="konzept-chevron">▼</span>
+        </div>
+        <div class="konzept-body">
+          <div class="konzept-inner">
+            <div class="konzept-tag">Quellen</div>
+            <p><strong>Primärquelle:</strong> Originalwerk, Studie, Datensatz.<br><br><strong>Sekundärquelle:</strong> Interpretation oder Zusammenfassung einer Primärquelle. Primärquellen sind grundsätzlich vorzuziehen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="konzept-card" onclick="toggleKonzept(this)">
+        <div class="konzept-header">
+          <div class="konzept-header-left">
+            <span class="konzept-num">6</span>
+            <span class="konzept-name">Argumentation</span>
+          </div>
+          <span class="konzept-chevron">▼</span>
+        </div>
+        <div class="konzept-body">
+          <div class="konzept-inner">
+            <div class="konzept-tag">Schreiben</div>
+            <p>Wissenschaftliche Argumente folgen dem Schema: These → Begründung → Beleg. Jede Behauptung muss durch Quellen oder Daten gestützt werden. Meinungen ohne Belege haben in wissenschaftlichen Texten keinen Platz.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB 3: Inhalt -->
+  <div class="tab-panel" id="tab-inhalt">
+
+    <div class="resource-list" style="margin-bottom:2rem;">
+      <li class="resource-list" style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="resource-icon icon-slides" style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;">📑</div>
+          <div>
+            <div class="resource-label" style="font-size:14px;font-weight:500;">Folien 1–20</div>
+            <div class="resource-desc" style="font-size:12px;color:var(--muted);">Kurze Einführung ins wissenschaftliche Schreiben</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="resource-icon icon-podcast" style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;">🎙</div>
+          <div>
+            <div class="resource-label" style="font-size:14px;font-weight:500;">Podcast 1.2</div>
+            <div class="resource-desc" style="font-size:12px;color:var(--muted);">Argumentation und Hypothesenbildung</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="resource-icon icon-slides" style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;">📺</div>
+          <div>
+            <div class="resource-label" style="font-size:14px;font-weight:500;">Acemate-Erklärung: Induktion & Deduktion</div>
+            <div class="resource-desc" style="font-size:12px;color:var(--muted);">Interaktive Erklärung aus dem Kurs</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);">
+          <div class="resource-icon icon-podcast" style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;">🎙</div>
+          <div>
+            <div class="resource-label" style="font-size:14px;font-weight:500;">Podcast 1.3 + 1.4</div>
+            <div class="resource-desc" style="font-size:12px;color:var(--muted);">Quellen, Zitation und Literaturrecherche</div>
+          </div>
+        </div>
+      </li>
+    </div>
+
+    <div class="inhalt-section">
+      <h2 class="inhalt-section-title">Was ist wissenschaftliches Schreiben?</h2>
+      <p class="inhalt-text">
+        Wissenschaftliches Schreiben unterscheidet sich fundamental von alltäglicher oder journalistischer Kommunikation. Es folgt strengen Regeln der Nachvollziehbarkeit, Objektivität und Überprüfbarkeit. Der Kern: Jede Aussage, die du triffst, muss entweder durch Quellen belegt oder durch deine eigene empirische Untersuchung gestützt sein.
+      </p>
+      <div class="inhalt-highlight">
+        <strong>Merksatz:</strong> Eine wissenschaftliche Behauptung ohne Beleg ist eine Meinung – und Meinungen haben in wissenschaftlichen Texten keinen Platz.
+      </div>
+    </div>
+
+    <div class="inhalt-section">
+      <h2 class="inhalt-section-title">Induktion und Deduktion im Vergleich</h2>
+      <p class="inhalt-text">
+        Die beiden grundlegenden Denkrichtungen im wissenschaftlichen Arbeiten sind Induktion und Deduktion. Beim induktiven Vorgehen beobachtest du zunächst Einzelfälle und leitest daraus eine allgemeine Theorie oder Regel ab. Das ist typisch für explorative, qualitative Forschung.
+      </p>
+      <p class="inhalt-text">
+        Beim deduktiven Vorgehen gehst du den umgekehrten Weg: Du startest mit einer bestehenden Theorie, formulierst daraus eine konkrete Hypothese und überprüfst diese anhand von Daten. Das ist das klassische Modell der quantitativen empirischen Forschung.
+      </p>
+      <div class="inhalt-highlight">
+        <strong>Beispiel Induktion:</strong> Du beobachtest in 50 Interviews, dass Studierende unter Zeitdruck mehr auswendig lernen. Daraus leitest du ab: Zeitdruck fördert oberflächliche Lernstrategien.
+      </div>
+    </div>
+
+    <div class="inhalt-section">
+      <h2 class="inhalt-section-title">Korrekt zitieren nach APA</h2>
+      <p class="inhalt-text">
+        Das APA-Format ist eines der weltweit meistgenutzten Zitationssysteme in den Sozial- und Wirtschaftswissenschaften. Es unterscheidet zwischen dem Kurzverweis im Fließtext und dem vollständigen Eintrag im Literaturverzeichnis.
+      </p>
+      <p class="inhalt-text">
+        Im Text zitierst du so: (Mustermann, 2021, S. 42). Im Literaturverzeichnis so: Mustermann, M. (2021). <em>Einführung ins wissenschaftliche Arbeiten.</em> Springer.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- TAB 4: Übungen -->
+  <div class="tab-panel" id="tab-uebungen">
+    <p style="font-size:14px; color:var(--muted); margin-bottom:1.25rem;">
+      Bearbeite die Aufgaben in der vorgeschlagenen Reihenfolge. Lösungshinweise kannst du aufklappen – aber versuche es zuerst selbst!
+    </p>
+
+    <div class="uebung-item">
+      <div class="uebung-header">
+        <div class="uebung-num">1</div>
+        <div class="uebung-content">
+          <div class="uebung-title">Podcast 1.2 – Höraufgabe</div>
+          <div class="uebung-desc">Höre Podcast 1.2 und notiere dir die drei Hauptargumente zur Hypothesenbildung. Was unterscheidet eine wissenschaftliche Hypothese von einer Alltagsvermutung?</div>
+        </div>
+        <span class="uebung-type-badge badge-podcast">Podcast</span>
+      </div>
+      <button class="loesung-toggle" onclick="toggleLoesung(this)">
+        ▶ Lösungshinweis anzeigen
+      </button>
+      <div class="loesung-body">
+        <div class="loesung-inner">
+          <div class="loesung-label">Lösungshinweis</div>
+          Eine wissenschaftliche Hypothese ist falsifizierbar (Popper), d.h. sie kann durch Daten widerlegt werden. Sie ist präzise formuliert (keine Floskeln wie „vielleicht") und bezieht sich auf messbare Variablen. Eine Alltagsvermutung ist dagegen oft vage, nicht operationalisiert und nicht systematisch überprüfbar.
+        </div>
+      </div>
+    </div>
+
+    <div class="uebung-item">
+      <div class="uebung-header">
+        <div class="uebung-num">2</div>
+        <div class="uebung-content">
+          <div class="uebung-title">Induktion oder Deduktion?</div>
+          <div class="uebung-desc">Ordne folgende Forschungsszenarien dem richtigen Ansatz zu: (a) Ein Forscher testet, ob Schlafmangel die Prüfungsleistung senkt. (b) Eine Forscherin befragt 30 Studierende offen über ihre Lernerfahrungen und entwickelt daraus ein Modell.</div>
+        </div>
+        <span class="uebung-type-badge badge-written">Schriftlich</span>
+      </div>
+      <button class="loesung-toggle" onclick="toggleLoesung(this)">
+        ▶ Lösungshinweis anzeigen
+      </button>
+      <div class="loesung-body">
+        <div class="loesung-inner">
+          <div class="loesung-label">Lösungshinweis</div>
+          (a) ist deduktiv – eine bestehende Annahme (Schlafmangel schadet) wird empirisch getestet.<br><br>(b) ist induktiv – aus Einzelbeobachtungen wird eine neue Theorie entwickelt. Typisch für qualitative Grounded Theory.
+        </div>
+      </div>
+    </div>
+
+    <div class="uebung-item">
+      <div class="uebung-header">
+        <div class="uebung-num">3</div>
+        <div class="uebung-content">
+          <div class="uebung-title">E-Workbook – Zitationsübung</div>
+          <div class="uebung-desc">Bearbeite die Zitationsaufgaben aus dem E-Workbook (Kapitel 3, Aufgabe 3.1–3.4). Korrigiere die fehlerhaften APA-Zitate und erstelle ein korrektes Literaturverzeichnis für die angegebenen Quellen.</div>
+        </div>
+        <span class="uebung-type-badge badge-workbook">E-Workbook</span>
+      </div>
+      <button class="loesung-toggle" onclick="toggleLoesung(this)">
+        ▶ Lösungshinweis anzeigen
+      </button>
+      <div class="loesung-body">
+        <div class="loesung-inner">
+          <div class="loesung-label">Lösungshinweis</div>
+          Häufige Fehler: fehlendes Erscheinungsjahr in Klammern, Verlag statt DOI bei Onlinequellen, fehlender kursiver Titel. Schema Buch: Nachname, I. (Jahr). <em>Titel.</em> Verlag. Schema Aufsatz: Nachname, I. (Jahr). Titel des Aufsatzes. <em>Zeitschriftentitel, Band</em>(Heft), Seiten.
+        </div>
+      </div>
+    </div>
+
+    <div class="uebung-item">
+      <div class="uebung-header">
+        <div class="uebung-num">4</div>
+        <div class="uebung-content">
+          <div class="uebung-title">Podcast 1.3 + 1.4 – Transferaufgabe</div>
+          <div class="uebung-desc">Nach den Podcasts: Entwickle eine eigene, falsifizierbare Hypothese zu einem Thema aus deinem Studienalltag. Begründe kurz, ob du sie induktiv oder deduktiv überprüfen würdest – und warum.</div>
+        </div>
+        <span class="uebung-type-badge badge-podcast">Podcast</span>
+      </div>
+      <button class="loesung-toggle" onclick="toggleLoesung(this)">
+        ▶ Lösungshinweis anzeigen
+      </button>
+      <div class="loesung-body">
+        <div class="loesung-inner">
+          <div class="loesung-label">Lösungshinweis</div>
+          Beispiel-Hypothese: „Studierende, die ihre Lernzeit in Blöcke von 25 Minuten (Pomodoro-Technik) aufteilen, erzielen bessere Klausurergebnisse als Studierende ohne feste Lernblöcke." Diese ist falsifizierbar und messbar. Deduktiver Test wäre naheliegend, da eine bekannte Theorie (Fokuszeit) überprüft wird.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Lernziele with localStorage
+  const STORAGE_KEY = 'lernplattform_k3_lernziele';
+  const items = document.querySelectorAll('.lernziel-item');
+  
+  function loadState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      items.forEach((item, i) => {
+        if (saved[i]) item.classList.add('checked');
+      });
+    } catch(e) {}
+    updateProgress();
+  }
+
+  function saveState() {
+    const state = Array.from(items).map(item => item.classList.contains('checked'));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function toggleLernziel(el) {
+    el.classList.toggle('checked');
+    saveState();
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = items.length;
+    const done = document.querySelectorAll('.lernziel-item.checked').length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('progress-text').textContent = `${done} von ${total} Lernzielen abgehakt`;
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+    const checkEl = document.getElementById('check-lernziele');
+    checkEl.textContent = done > 0 ? done + '/' + total : '–';
+    checkEl.style.background = done === total ? 'var(--accent)' : 'var(--accent-light)';
+    checkEl.style.color = done === total ? 'white' : 'var(--accent)';
+  }
+
+  // Konzept accordion
+  function toggleKonzept(el) {
+    el.classList.toggle('open');
+  }
+
+  // Lösung toggle
+  function toggleLoesung(btn) {
+    const item = btn.closest('.uebung-item');
+    const isOpen = item.classList.contains('sol-open');
+    item.classList.toggle('sol-open');
+    btn.textContent = isOpen ? '▶ Lösungshinweis anzeigen' : '▼ Lösungshinweis schließen';
+  }
+
+  loadState();
+</script>
+</body>
+</html>
